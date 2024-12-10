@@ -18,6 +18,8 @@ class Car extends Model
         'owner_id',
         'fuel_type',
         'status',
+        'latitude',
+        'longitude'
     ];
 
     const FUEL_TYPES = ['gasoline', 'diesel', 'ethanol', 'gnv', 'electric', 'hydrogen'];
