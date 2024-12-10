@@ -17,9 +17,16 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(): JsonResponse
     {
-        //
+        $users = Client::orderBy('name', 'ASC')->get();
+        // $users = Client::orderBy('name', 'ASC')->paginate(10);
+
+        return response()->json([
+            'status' => true,
+            'users' => $users,
+        ], 200);
     }
 
     /**
@@ -56,50 +63,6 @@ class ClientController extends Controller
         }
     }
 
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required|string|min:8',
-    //     ]);
-
-    //     if (!Auth::attempt($credentials)) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Credenciais inválidas.',
-    //         ], 401);
-    //     }
-
-    //     // Autenticando usuário
-    //     $user = Auth::user();
-    //     $token = $user->createToken('auth_token')->plainTextToken;
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'Login realizado com sucesso!',
-    //         'token' => $token,
-    //         'user' => $user,
-    //     ], 200);
-    // }
-
-    public function login(Request $request): JsonResponse
-    {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $token = $request->user()->createToken('api-token')->plainTextToken;
-
-            return response()->json([
-                'status' => true,
-                'token' => $token,
-                'user' => $user,
-            ], 201);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Login ou senha incorreta.'
-            ], 404);
-        }
-    }
 
     /**
      * Display the specified resource.

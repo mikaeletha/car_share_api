@@ -21,4 +21,11 @@ class Client extends Model
     protected $hidden = [
         'password',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 }
