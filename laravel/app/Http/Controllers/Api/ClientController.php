@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -59,7 +58,7 @@ class ClientController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Usuário não cadastrado!',
-            ], 201);
+            ], 400);
         }
     }
 
