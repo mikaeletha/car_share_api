@@ -8,6 +8,7 @@ use App\Models\Car;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +20,6 @@ class CarController extends Controller
 
     public function index(): JsonResponse
     {
-        // Filtra os carros com status = 'available'
         $cars = Car::where('status', 'available')
             ->orderBy('model', 'ASC')
             ->get();
@@ -128,8 +128,31 @@ class CarController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function remove($id): JsonResponse
     {
-        //
+        $car = Car::find($id);
+
+        if (!$car) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Car not found.',
+            ], 404);
+        }
+
+        // if ($car->owner_id != Auth::id()) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'You are not the owner of this car.',
+        //     ], 403);
+        // }
+
+        $car->deleted = 1;
+        $car->status = 'unavailable';
+        $car->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Car removed successfully.',
+        ], 200);
     }
 }

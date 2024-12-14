@@ -15,8 +15,10 @@ Route::get('/cars', [CarController::class, 'index'])->name('list_available_cars'
 Route::post('/register_car', [CarController::class, 'store'])->name('register_car');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('list_owner_s_cars');
 
+Route::put('/cars/{id}/remove', [CarController::class, 'remove'])->name('remove_car');
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/users', [ClientController::class, 'index'])->name('users');
+    // Route::put('/cars/{id}/remove', [CarController::class, 'remove'])->name('remove_car');
 });

@@ -27,7 +27,7 @@ class Car extends Model
 
     const FUEL_TYPES = ['gasoline', 'diesel', 'ethanol', 'gnv', 'electric', 'hydrogen'];
 
-    const STATUSES = ['available', 'not_available'];
+    const STATUSES = ['available', 'unavailable'];
 
     public function owner(): BelongsTo
     {
