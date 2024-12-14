@@ -9,21 +9,27 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CarController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index(): JsonResponse
     {
-        $cars = Car::orderBy('model', 'ASC')->get();
+        // Filtra os carros com status = 'available'
+        $cars = Car::where('status', 'available')
+            ->orderBy('model', 'ASC')
+            ->get();
 
         return response()->json([
             'status' => true,
             'cars' => $cars,
         ], 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -56,14 +62,14 @@ class CarController extends Controller
             return response()->json([
                 'status' => true,
                 'car' => $car,
-                'message' => 'Carro criado com sucesso!'
+                'message' => 'Car successfully created!'
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'status' => false,
-                'message' => 'Carro não cadastrado!',
+                'message' => 'Car not registered!',
                 // 'error' => $e->getMessage(),
             ], 400);
         }
@@ -73,10 +79,35 @@ class CarController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $id): JsonResponse
     {
-        //
+        try {
+            // Busca os carros pelo `owner_id` fornecido
+            $cars = Car::where('owner_id', $id)
+                ->orderBy('model', 'ASC')
+                ->get();
+
+            // Verifica se há carros para o dono
+            if ($cars->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No cars found for this owner!',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => true,
+                'cars' => $cars,
+            ], 200);
+        } catch (Exception $e) {
+            // Captura erros inesperados
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred while retrieving cars.',
+            ], 500);
+        }
     }
+
 
     /**
      * Show the form for editing the specified resource.
