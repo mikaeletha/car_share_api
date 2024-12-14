@@ -50,14 +50,14 @@ class ClientController extends Controller
             return response()->json([
                 'status' => true,
                 'user' => $user,
-                'message' => 'Usuário cadastrado com sucesso!',
+                'message' => 'User registered successfully!',
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'status' => false,
-                'message' => 'Usuário não cadastrado!',
+                'message' => 'User not registered!',
             ], 400);
         }
     }
