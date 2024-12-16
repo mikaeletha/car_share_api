@@ -33,4 +33,9 @@ class Car extends Model
     {
         return $this->belongsTo(Client::class, 'owner_id', 'id');
     }
+
+    public function carRentals()
+    {
+        return $this->hasMany(CarRental::class, 'car_id', 'id');
+    }
 }

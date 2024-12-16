@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\BorrowCarRequest;
 use App\Http\Requests\Api\StoreCarRequest;
 use App\Models\Car;
+use App\Models\CarRental;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -154,5 +156,47 @@ class CarController extends Controller
             'status' => true,
             'message' => 'Car removed successfully.',
         ], 200);
+    }
+
+    public function postRental(BorrowCarRequest $request): JsonResponse
+    {
+        $car = Car::find($request->car_id);
+
+        // Verifica se o carro existe e está disponível
+        if (!$car || $car->status !== 'available') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Car is not available or does not exist.',
+            ], 400);
+        }
+
+        try {
+            // Cria o registro de aluguel
+            $carRental = CarRental::create([
+                'car_id' => $request->car_id,
+                'client_id' => $request->client_id,
+                'borrowed_at' => now(),
+                'borrowed_latitude' => $request->borrowed_latitude,
+                'borrowed_longitude' => $request->borrowed_longitude,
+            ]);
+
+            // Atualiza o status do carro para indisponível
+            $car->status = 'unavailable';
+            $car->save();
+
+            // Retorna sucesso
+            return response()->json([
+                'status' => true,
+                'message' => 'Car borrowed successfully.',
+                'data' => $carRental,
+            ], 201);
+        } catch (\Exception $e) {
+            // Loga o erro e retorna falha
+            // \Log::error('Error borrowing car', ['error' => $e->getMessage()]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Error borrowing car. Please try again later.',
+            ], 500);
+        }
     }
 }
