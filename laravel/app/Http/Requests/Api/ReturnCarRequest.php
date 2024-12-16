@@ -3,15 +3,27 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Validation\Validator;
 
 class ReturnCarRequest extends FormRequest
 {
+    use HasApiTokens;
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'erros' => $validator->errors(),
+        ], 422));
     }
 
     /**

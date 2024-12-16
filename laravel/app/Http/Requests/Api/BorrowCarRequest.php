@@ -36,12 +36,8 @@ class BorrowCarRequest extends FormRequest
         return [
             'car_id' => 'required|exists:cars,id',
             'client_id' => 'required|exists:clients,id',
-            'borrowed_at' => 'nullable|date|after_or_equal:today',
-            'returned_at' => 'nullable|date|after:borrowed_at',
             'borrowed_latitude' => 'required|numeric',
             'borrowed_longitude' => 'required|numeric',
-            'returned_latitude' => 'nullable|numeric',
-            'returned_longitude' => 'nullable|numeric',
         ];
     }
 
@@ -52,13 +48,8 @@ class BorrowCarRequest extends FormRequest
             'car_id.exists' => 'The specified car does not exist.',
             'client_id.required' => 'The client field is required.',
             'client_id.exists' => 'The specified client does not exist.',
-            // 'borrowed_at.required' => 'The borrow date is required.',
-            'borrowed_at.after_or_equal' => 'The borrow date must be today or a future date.',
-            'returned_at.after' => 'The return date must be later than the borrow date.',
             'borrowed_latitude.required' => 'The borrowed latitude is required.',
             'borrowed_longitude.required' => 'The borrowed longitude is required.',
-            'returned_latitude.numeric' => 'The returned latitude must be a number.',
-            'returned_longitude.numeric' => 'The returned longitude must be a number.',
         ];
     }
 }
