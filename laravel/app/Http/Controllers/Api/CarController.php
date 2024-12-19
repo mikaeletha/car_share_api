@@ -54,9 +54,11 @@ class CarController extends Controller
                 'model' => $request->model,
                 'manufacturer' => $request->manufacturer,
                 'year' => $request->year,
-                'owner_id' => $request->owner_id,
-                'fuel_type' => $request->fuel_type,
-                'status' => $request->status,
+                'owner_id' => $request->userId,
+                'fuel_type' => $request->fuelType,
+                'status' => 'available',
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
             ]);
 
             DB::commit();
@@ -110,6 +112,30 @@ class CarController extends Controller
         }
     }
 
+    public function getCarInfo($id)
+    {
+        try {
+            $car = Car::find($id);
+
+            if (!$car) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Car not found.',
+                ], 404);
+            }
+            return response()->json([
+                'status' => true,
+                'cars' => $car,
+            ], 200);
+        } catch (Exception $e) {
+            // Captura erros inesperados
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred while retrieving cars.',
+            ], 500);
+        }
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -140,13 +166,6 @@ class CarController extends Controller
                 'message' => 'Car not found.',
             ], 404);
         }
-
-        // if ($car->owner_id != Auth::id()) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => 'You are not the owner of this car.',
-        //     ], 403);
-        // }
 
         $car->deleted = 1;
         $car->status = 'unavailable';

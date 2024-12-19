@@ -25,9 +25,10 @@ class StoreCarRequest extends FormRequest
             'model' => 'required|string|max:255',
             'manufacturer' => 'required|string|max:255',
             'year' => 'required|integer|digits:4|between:1900,' . date('Y'),
-            'owner_id' => 'required|exists:clients,id',
-            'fuel_type' => 'required|in:gasoline,ethanol,diesel,electric,hybrid',
-            'status' => 'required|in:available,unavailable',
+            'fuelType' => 'required|in:gasoline,ethanol,diesel,electric,hybrid',
+            'userId' => 'required|exists:clients,id',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ];
     }
 
@@ -38,10 +39,13 @@ class StoreCarRequest extends FormRequest
             'manufacturer.required' => 'O fabricante do carro é obrigatório.',
             'year.required' => 'O ano do carro é obrigatório.',
             'year.digits' => 'O ano deve ter 4 dígitos.',
-            'owner_id.exists' => 'O dono informado não existe.',
-            'owner_id.required' => 'O id dono do carro é obrigatório.',
-            'fuel_type.in' => 'O tipo de combustível informado é inválido.',
-            'status.in' => 'O status informado é inválido.',
+            'userId.exists' => 'O dono informado não existe.',
+            'userId.required' => 'O id dono do carro é obrigatório.',
+            'fuelType.in' => 'O tipo de combustível informado é inválido.',
+            'latitude.required' => 'The latitude is required.',
+            'latitude.numeric' => 'The latitude must be a number.',
+            'longitude.required' => 'The longitude is required.',
+            'longitude.numeric' => 'The longitude must be a number.',
         ];
     }
 }
