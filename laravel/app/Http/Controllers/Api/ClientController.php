@@ -76,8 +76,39 @@ class ClientController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validatedData = $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $user = Client::find($id);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.',
+            ], 404);
+        }
+
+        try {
+            $user->update([
+                'latitude' => $validatedData['latitude'],
+                'longitude' => $validatedData['longitude'],
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Location updated successfully.',
+                'data' => $user,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error! Please try again later.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

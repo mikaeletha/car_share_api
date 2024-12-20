@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class CarRentalController extends Controller
 {
-    public function borrow(BorrowCarRequest $request): JsonResponse
+    public function borrow(BorrowCarRequest $request)
     {
         $request->merge(['borrowed_at' => Carbon::now()]);
 
