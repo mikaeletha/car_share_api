@@ -51,9 +51,10 @@ class CarRentalController extends Controller
         }
     }
 
-    public function return(ReturnCarRequest $request, $rental_id): JsonResponse
+    // public function return(ReturnCarRequest $request, $rental_id)
+    public function return(ReturnCarRequest $request)
     {
-        $carRental = CarRental::find($rental_id);
+        $carRental = CarRental::find($request->rental_id);
 
         if (!$carRental) {
             return response()->json([
@@ -95,5 +96,51 @@ class CarRentalController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    // public function listBorrowedCars($userId)
+    // {
+    //     $borrowedCars = CarRental::with('car')
+    //         ->where('client_id', $userId)
+    //         ->whereNull('returned_at')
+    //         ->get();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'cars' => $borrowedCars,
+    //     ]);
+    // }
+
+    public function listBorrowedCars($userId)
+    {
+        // Obtém os carros emprestados onde "returned_at" é null
+        $borrowedCars = CarRental::with('car')
+            ->where('client_id', $userId)
+            ->whereNull('returned_at')
+            ->get();
+
+        // Mapeia os dados dos carros emprestados para a estrutura desejada
+        $responseCars = $borrowedCars->map(function ($rental) {
+            return [
+                'id' => $rental->car->id,
+                'model' => $rental->car->model,
+                'manufacturer' => $rental->car->manufacturer,
+                'year' => $rental->car->year,
+                'owner_id' => $rental->car->owner_id,
+                'fuel_type' => $rental->car->fuel_type,
+                'status' => $rental->car->status,
+                'created_at' => $rental->car->created_at,
+                'updated_at' => $rental->car->updated_at,
+                'latitude' => $rental->car->latitude,
+                'longitude' => $rental->car->longitude,
+                'deleted' => $rental->car->deleted,
+                'rental_id' => $rental->id,
+            ];
+        });
+
+        return response()->json([
+            'status' => true,
+            'cars' => $responseCars,
+        ]);
     }
 }

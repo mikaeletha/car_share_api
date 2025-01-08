@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/cars/owner/{id}', [CarController::class, 'show'])->name('list_owner_s_cars');
     Route::post('/car-rentals/borrow', [CarRentalController::class, 'borrow'])->name('car-rental-borrow');
     Route::post('/car-rentals/{rental_id}/return', [CarRentalController::class, 'return'])->name('car-rentals-return');
+    Route::get('borrowed-cars/{user}', [CarRentalController::class, 'listBorrowedCars'])->name('list-borrowed-cars');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
